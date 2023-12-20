@@ -7,7 +7,7 @@ export async function summarizeText(text: string) {
     model: 'facebook/bart-large-cnn',
     inputs: text,
     parameters: {
-      max_length: 500
+      min_length: 100
     }
   })
 

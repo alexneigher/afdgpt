@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { dropdownOptions } from "~/lib/dropdown-options";
 import { summarizeText } from "~/lib/huggingface-api";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -8,7 +9,7 @@ interface SummaryObject {
 }
 
 export const postRouter = createTRPCRouter({
-  hello: publicProcedure
+  summarize: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(async ({ input }) => {
       if (input.text) {
@@ -16,7 +17,7 @@ export const postRouter = createTRPCRouter({
 
         const body = await request.text();
 
-        const responseText = parseResponse(body);
+        const responseText = parsedResponse(body);
 
         const summary: SummaryObject = (await summarizeText(
           responseText,
@@ -27,12 +28,44 @@ export const postRouter = createTRPCRouter({
         return "";
       }
     }),
+  getAfd: publicProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const url = dropdownOptions.find((option) => option.name === input.id)
+        ?.value;
+
+      if (url == null) {
+        return "";
+      }
+
+      const request = await fetch(url);
+      const body = await request.text();
+      const responseText = fullContent(body);
+      return responseText;
+    }),
 });
 
-function parseResponse(text: string) {
+function fullContent(text: string) {
   let content = "";
   const regex =
     /<!-- \/\/ CONTENT STARTS HERE -->\s*(.*?)\s*<!-- \/\/ CONTENT ENDS HERE -->/s;
+  const match = text.match(regex);
+
+  if (match && match[1]) {
+    content = match[1];
+    return content;
+  } else {
+    throw new Error("Could not parse response");
+  }
+}
+
+function parsedResponse(text: string) {
+  let content = "";
+  const regex = /<pre.*?>([\s\S]*?)<\/pre>/i;
   const match = text.match(regex);
 
   if (match && match[1]) {

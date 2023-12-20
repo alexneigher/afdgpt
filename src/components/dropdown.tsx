@@ -12,7 +12,10 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onChange }) => {
   };
 
   return (
-    <select onChange={handleDropdownChange}>
+    <select 
+      onChange={handleDropdownChange}
+      className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+    >
       <option value="">
         Pick One
       </option>

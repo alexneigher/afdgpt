@@ -2,6 +2,8 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Dropdown from "~/components/dropdown";
+import Loading from "~/components/loading";
+import { dropdownOptions } from "~/lib/dropdown-options";
 
 import { api } from "~/utils/api";
 
@@ -16,7 +18,7 @@ export default function Home() {
     setSummaryIsLoading(true)
   };
   
-  const response = api.post.hello.useQuery({text: afdSelected ? afdSelected : ""});
+  const response = api.post.summarize.useQuery({text: afdSelected ? afdSelected : ""});
 
   useEffect(() => { 
     if (response.data){
@@ -24,13 +26,6 @@ export default function Home() {
       setSummary(response.data)
     }
   }, [response.data])
-
-
-  const dropdownOptions = [
-    { value: 'https://forecast.weather.gov/product.php?site=STO&issuedby=STO&product=AFD&format=TXT&version=1&glossary=0', label: 'Sacramento, CA' },
-    { value: 'https://forecast.weather.gov/product.php?site=NWS&issuedby=REV&product=AFD&format=TXT&version=1&glossary=0', label: 'Reno, NV' },
-    // Add more options as needed
-  ];
 
   return (
     <>
@@ -47,16 +42,12 @@ export default function Home() {
               <em>GPT</em></span>
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
+            <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20">
               <h3 className="text-2xl font-bold">What is this?</h3>
               <div className="text-lg">
                 Area Forecast Discussions are complex, technical, and full of meteorological jargon. AFDGPT is a tool to help simplify the process of reading and understanding AFDs.
               </div>
-            </Link>
+            </div>
             <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
               <h3 className="text-2xl text-white font-bold">Select Area Forecast</h3>
               <Dropdown options={dropdownOptions} onChange={handleDropdownChange}/>
@@ -67,13 +58,11 @@ export default function Home() {
               <div className="flex flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
                 <h3 className="text-2xl text-white font-bold">
                   AFD for{' '}
-                  <Link classname="underline" href={dropdownOptions.find((o) => o.value == afdSelected)?.value} target="_blank">
-                    {
-                      dropdownOptions.find((o) => o.value == afdSelected)?.label
-                    }
+                  <Link className="underline" href={`/forecasts/${dropdownOptions.find((o) => o.value == afdSelected)?.name}`}>
+                    { dropdownOptions.find((o) => o.value == afdSelected)?.label }
                   </Link>
                 </h3>
-                {summaryIsLoading ? ("Summarizing..."):(summary)}
+                {summaryIsLoading ? (<Loading/>):(summary)}
               </div>
             ):"No AFD Selected"
             }
