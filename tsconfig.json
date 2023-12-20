@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+    // TODO(matt): for the time being, ImplicitAnyIndex is pretty aggressive
+    "ignoreDeprecations": "5.0",
+    "suppressImplicitAnyIndexErrors": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": [
+    ".eslintrc.js",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",
+    "**/*.mjs"
+  ],
+  "exclude": ["node_modules"]
+}
